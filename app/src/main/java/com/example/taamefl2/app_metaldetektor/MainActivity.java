@@ -10,11 +10,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager metalSensorManager;
     private Sensor magneticField;
     private ProgressBar fortschritt;
+    private GraphView teslaGraph;
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // UI part
         Button button = findViewById(R.id.showGraph);
         fortschritt = findViewById(R.id.show_progress);
-
+        teslaGraph = findViewById(R.id.teslaGraph);
 
         // Sensor part
         metalSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -51,6 +57,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float[] mag = event.values;
         double betrag = Math.sqrt(mag[0] * mag[0] + mag[1] * mag[1] + mag[2] * mag[2]);
         fortschritt.setProgress((int)betrag);
+
+        counter++;
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(counter, betrag)
+        });
+        teslaGraph.addSeries(series);
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
